@@ -10,9 +10,9 @@ centroids = []
 def connectCentroidsAndSolution():
     global NUM_CLUSTERS, orderSolution, centroids
     csHashmap = {}
-    fmeanssolotions = open(f'C:\\Users\\mn170387d\\Desktop\\elki16processed\\means_solutions.txt', "w+")
-    with open(f'C:\\Users\\mn170387d\\Desktop\\elki16processed\\solution.txt', 'r') as solution, \
-            open(f'C:\\Users\\mn170387d\\Desktop\\elki16processed\\cluster means.txt', 'r') as means:
+    fmeanssolotions = open(f'C:\\Users\\mn170387d\\Desktop\\elki19processed\\means_solutions.txt', "w+")
+    with open(f'C:\\Users\\mn170387d\\Desktop\\elki19processed\\solution.txt', 'r') as solution, \
+            open(f'C:\\Users\\mn170387d\\Desktop\\elki19processed\\cluster means.txt', 'r') as means:
         order = solution.readline()
         centroid = means.readline()
         while order != '' and centroid != '':
@@ -34,7 +34,7 @@ def connectCentroidsAndSolution():
 
 def createCentroidToClusterHashmap():
     ccHashmap = {}
-    directory = f'C:\\Users\\mn170387d\\Desktop\\elki16processed'
+    directory = f'C:\\Users\\mn170387d\\Desktop\\elki19processed'
     for filename in os.listdir(directory):
         if 'cluster_' in filename:
             with open(os.path.join(directory, filename), 'r') as cluster:
@@ -78,6 +78,32 @@ def findClosestFromNeighborCluster(i, inext, ccHmap,
         ccHmap[centroidNeighbor][last] = ccHmap[centroidNeighbor][bestNeighbor]
         ccHmap[centroidNeighbor][bestNeighbor] = temp
 
+def findClosestFromNeighborCluster2(i, inext, ccHmap):  # In hole will be first hole of the cluster, Out will be on last place, the parameter InOut tells that-> In==true
+    global orderSolution, centroids
+    bestCurr = 0
+    bestNeighbor = 0
+    bestDistance = float("inf")
+    centroid = centroids[orderSolution[i]]
+    currCluster = ccHmap[centroid]
+    centroidNeighbor = centroids[orderSolution[inext]]
+    neighborCluster = ccHmap[centroidNeighbor]
+
+    for c in range(len(currCluster)):
+        for n in range(len(neighborCluster)):
+            distance = np.linalg.norm(np.array(currCluster[c]) - np.array(neighborCluster[n]))
+            if distance < bestDistance:
+                bestDistance = distance
+                bestCurr = c
+                bestNeighbor = n
+
+        temp = neighborCluster[0]
+        ccHmap[centroidNeighbor][0] = ccHmap[centroidNeighbor][bestNeighbor]
+        ccHmap[centroidNeighbor][bestNeighbor] = temp
+
+        temp = currCluster[-1]
+        ccHmap[centroid][-1] = ccHmap[centroid][bestCurr]
+        ccHmap[centroid][bestCurr] = temp
+
 
 def exportToCppFolder(ccHmap):
     numcl = 0
@@ -91,16 +117,16 @@ def exportToCppFolder(ccHmap):
 
 
 def exportInterclusterConnections(ccHmap):
-    fprocessed = open(f'C:\\Users\\mn170387d\\Desktop\\clusters\\connections.txt', "w+")
+    fprocessed = open(f'C:\\Users\\mn170387d\\Desktop\\clusters\\connections.conn', "w+")
 
     for i in range(NUM_CLUSTERS):
         centroid = centroids[orderSolution[i]]
         currCluster = ccHmap[centroid]
         centroidNeighbor = centroids[orderSolution[(i + 1) % NUM_CLUSTERS]]
         neighborCluster = ccHmap[centroidNeighbor]
-        #out of currCluster is connected with in of neighborCluster
+        # out of currCluster is connected with in of neighborCluster
         outHoleCurr = currCluster[-1]
-        inHoleNext = neighborCluster[0] #that is one path we need to write to file
+        inHoleNext = neighborCluster[0]  # that is one path we need to write to file
         fprocessed.write(f'{outHoleCurr[0]} {outHoleCurr[1]} - {inHoleNext[0]} {inHoleNext[1]}\n')
 
     fprocessed.close()
@@ -115,16 +141,19 @@ def main():
     # for key, val in centroidOrderHashMap.items():
     #     print(key, val)
 
+    # for i in range(NUM_CLUSTERS):
+    #     findClosestFromNeighborCluster(i, (i + 1) % NUM_CLUSTERS, centroidClusterHashmap, True)
+    #     findClosestFromNeighborCluster((i + 1) % NUM_CLUSTERS, i, centroidClusterHashmap, False)
+
     for i in range(NUM_CLUSTERS):
-        findClosestFromNeighborCluster(i, (i + 1) % NUM_CLUSTERS, centroidClusterHashmap, True)
-        findClosestFromNeighborCluster((i + 1) % NUM_CLUSTERS, i, centroidClusterHashmap, False)
+        findClosestFromNeighborCluster2(i, (i + 1) % NUM_CLUSTERS, centroidClusterHashmap)
 
     # print("AFTER InOut PROCESSING")
     # for key, val in centroidClusterHashmap.items():
     #     print(key, "===", val)
 
     # writing to clusters folder that will go to CUDA
-    # exportToCppFolder(centroidClusterHashmap)
+    exportToCppFolder(centroidClusterHashmap)
     exportInterclusterConnections(centroidClusterHashmap)
 
 

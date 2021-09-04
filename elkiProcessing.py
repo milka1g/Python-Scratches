@@ -1,11 +1,12 @@
 import numpy as np
 import os
 import re
+from pathlib import Path
 
 
 def readFiles():
     files = []
-    directory = f'C:\\Users\\mn170387d\\Desktop\\elki16'
+    directory = f'C:\\Users\\mn170387d\\Desktop\\elkiInit3'
     for filename in os.listdir(directory):
         if 'cluster' in filename:
             fullname = os.path.join(directory, filename)
@@ -13,6 +14,7 @@ def readFiles():
         else:
             continue
     return files
+
 
 def processFile(file):
     basename = os.path.basename(file)
@@ -23,16 +25,20 @@ def processFile(file):
             if 'ID' in line:
                 numHoles = numHoles + 1
 
-    fprocessed = open(f'C:\\Users\\mn170387d\\Desktop\\elki16processed\\{basename}', "w+")
+
+    fprocessed = open(f'C:\\Users\\mn170387d\\Desktop\\elkiInit3processed\\{basename}', "w+")
     fprocessed.write(str(numHoles) + '\n')
 
-    fmeans = open(f'C:\\Users\\mn170387d\\Desktop\\elki16processed\\cluster means.txt', "a")
+    fmeans = open(f'C:\\Users\\mn170387d\\Desktop\\elkiInit3processed\\cluster means.txt', "a")
+    pathMeans = Path(f'C:\\Users\\mn170387d\\Desktop\\elkiInit3processed\\cluster means.txt')
+    if pathMeans.stat().st_size == 0:
+        fmeans.write("16\n")
 
     with open(f'{file}', 'r') as reader:
         for line in reader:
             if 'Cluster Mean' in line:
-                coords = re.findall("\-?\d+\.\d+",line)
-                clusterMean = coords[0] + " " + coords[1]
+                coords = re.findall("\-?\d+\.\d+", line)
+                clusterMean = str(round(float(coords[0]),4)) + " " + str(round(float(coords[1]),4))
                 fmeans.write(clusterMean + '\n')
             if 'ID' in line:
                 coords = re.findall("\-?\d+\.\d+", line)
@@ -40,6 +46,7 @@ def processFile(file):
                 fprocessed.write(coordHole + '\n')
         fprocessed.write("cluster mean: " + clusterMean)
         fprocessed.close()
+    fmeans.close()
 
 
 def main():
@@ -49,4 +56,4 @@ def main():
 
 
 if __name__ == '__main__':
-        main()
+    main()

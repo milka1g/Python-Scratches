@@ -3,7 +3,7 @@ import numpy as np
 fix = []
 
 def main():
-    with open(f'C:\\Users\\mn170387d\\Desktop\\in263.txt', 'r') as reader:
+    with open(f'C:\\Users\\mn170387d\\Desktop\\elkiInit3processed\\cluster means.txt', 'r') as reader:
         for line in reader:
             xy = line.split()
             print(xy)

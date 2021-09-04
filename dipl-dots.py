@@ -86,12 +86,11 @@ def main():
 
 
     ################DBSCAN############################
-    dbscan = DBSCAN(eps=11, min_samples=5, metric='euclidean').fit(arr)
-    labels = dbscan.labels_
-    print("labels_:", labels)
+    # dbscan = DBSCAN(eps=11, min_samples=5, metric='euclidean').fit(arr)
+    # labels = dbscan.labels_
+    # print("labels_:", labels)
 
     df = pd.DataFrame(arr, columns=['x','y'])
-    df['clusters'] = labels
 
     # #get only unique values
     # unique_cluster_numbers = []
@@ -138,7 +137,7 @@ def main():
     # df['clusters'] = identified_clusters
 
     plt.figure(1)
-    plt.scatter(df['x'],df['y'],c=df['clusters'], cmap='rainbow')
+    plt.scatter(df['x'],df['y'])
     plt.show()
 
 
