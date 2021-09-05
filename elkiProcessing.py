@@ -6,7 +6,7 @@ from pathlib import Path
 
 def readFiles():
     files = []
-    directory = f'C:\\Users\\mn170387d\\Desktop\\elkiInit3'
+    directory = f'C:\\Users\\mn170387d\\Desktop\\manual'
     for filename in os.listdir(directory):
         if 'cluster' in filename:
             fullname = os.path.join(directory, filename)
@@ -26,11 +26,11 @@ def processFile(file):
                 numHoles = numHoles + 1
 
 
-    fprocessed = open(f'C:\\Users\\mn170387d\\Desktop\\elkiInit3processed\\{basename}', "w+")
+    fprocessed = open(f'C:\\Users\\mn170387d\\Desktop\\manual\\{basename}', "w+")
     fprocessed.write(str(numHoles) + '\n')
 
-    fmeans = open(f'C:\\Users\\mn170387d\\Desktop\\elkiInit3processed\\cluster means.txt', "a")
-    pathMeans = Path(f'C:\\Users\\mn170387d\\Desktop\\elkiInit3processed\\cluster means.txt')
+    fmeans = open(f'C:\\Users\\mn170387d\\Desktop\\manual\\cluster means.txt', "a")
+    pathMeans = Path(f'C:\\Users\\mn170387d\\Desktop\\manual\\cluster means.txt')
     if pathMeans.stat().st_size == 0:
         fmeans.write("16\n")
 

@@ -10,9 +10,9 @@ centroids = []
 def connectCentroidsAndSolution():
     global NUM_CLUSTERS, orderSolution, centroids
     csHashmap = {}
-    fmeanssolotions = open(f'C:\\Users\\mn170387d\\Desktop\\elki19processed\\means_solutions.txt', "w+")
-    with open(f'C:\\Users\\mn170387d\\Desktop\\elki19processed\\solution.txt', 'r') as solution, \
-            open(f'C:\\Users\\mn170387d\\Desktop\\elki19processed\\cluster means.txt', 'r') as means:
+    fmeanssolotions = open(f'C:\\Users\\mn170387d\\Desktop\\manual\\means_solutions.txt', "w+")
+    with open(f'C:\\Users\\mn170387d\\Desktop\\manual\\solution.txt', 'r') as solution, \
+            open(f'C:\\Users\\mn170387d\\Desktop\\manual\\cluster means.txt', 'r') as means:
         order = solution.readline()
         centroid = means.readline()
         while order != '' and centroid != '':
@@ -34,7 +34,7 @@ def connectCentroidsAndSolution():
 
 def createCentroidToClusterHashmap():
     ccHashmap = {}
-    directory = f'C:\\Users\\mn170387d\\Desktop\\elki19processed'
+    directory = f'C:\\Users\\mn170387d\\Desktop\\manual'
     for filename in os.listdir(directory):
         if 'cluster_' in filename:
             with open(os.path.join(directory, filename), 'r') as cluster:
@@ -141,12 +141,13 @@ def main():
     # for key, val in centroidOrderHashMap.items():
     #     print(key, val)
 
-    # for i in range(NUM_CLUSTERS):
-    #     findClosestFromNeighborCluster(i, (i + 1) % NUM_CLUSTERS, centroidClusterHashmap, True)
-    #     findClosestFromNeighborCluster((i + 1) % NUM_CLUSTERS, i, centroidClusterHashmap, False)
-
     for i in range(NUM_CLUSTERS):
-        findClosestFromNeighborCluster2(i, (i + 1) % NUM_CLUSTERS, centroidClusterHashmap)
+        findClosestFromNeighborCluster(i, (i + 1) % NUM_CLUSTERS, centroidClusterHashmap, True)
+        findClosestFromNeighborCluster((i + 1) % NUM_CLUSTERS, i, centroidClusterHashmap, False)
+
+    # for i in range(NUM_CLUSTERS):
+    #     findClosestFromNeighborCluster2(i, (i + 1) % NUM_CLUSTERS, centroidClusterHashmap)
+    #     #findClosestFromNeighborCluster2((i + 1) % NUM_CLUSTERS, i, centroidClusterHashmap)
 
     # print("AFTER InOut PROCESSING")
     # for key, val in centroidClusterHashmap.items():
